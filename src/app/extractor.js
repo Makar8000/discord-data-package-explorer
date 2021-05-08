@@ -14,12 +14,10 @@ import { snakeCase } from 'snake-case';
  */
 const fetchUser = async (userID) => {
     axiosRetry(axios, { 
-      retries: 3,
-      retryDelay: retryCount => retryCount * 1000,
-      shouldResetTimeout: true,
-      retryCondition: (error) => {
-          return error.response && error.response.status === 500 && error.response.data && error.response.data.contains("Cannot fetch the Discord API");
-      },
+      retries: 4,
+      retryDelay: retryCount => retryCount * 2000,
+      shouldResetTimeout: false,
+      retryCondition: err => err.response && err.response.status === 500,
     });
     const res = await axios(`https://diswho.androz2091.fr/user/${userID}`).catch(() => {});
     if (!res || !res.data) return {
@@ -241,8 +239,8 @@ export const extractData = async (files) => {
         .sort((a, b) => b.messages.length - a.messages.length)
         .slice(0, topCount);
     await Promise.all(extractedData.topDMs.map((channel) => {
+        const channelIndex = extractedData.topDMs.findIndex((c) => c.data.id === channel.data.id);
         return new Promise((resolve) => {
-            const channelIndex = extractedData.topDMs.findIndex((c) => c.data.id === channel.data.id);
             if(channel.dmUserID) {
                 fetchUser(channel.dmUserID).then((userData) => {
                     extractedData.topDMs[channelIndex].userData = userData;
@@ -251,12 +249,19 @@ export const extractData = async (files) => {
             } else {
                 extractedData.topDMs[channelIndex].userData = {
                     avatar: null,
-                    discriminator: `${channel.data.type === 3 ? 'Group_DM' : channel.data.type === 0 ? `${channel.data.guild.name.replaceAll(" ", "_")}` : ''}`,
+                    discriminator: `${channel.data.type === 3 ? 'Group_DM' : channel.data.type === 0 && channel.data.guild ? `${channel.data.guild.name.replaceAll(" ", "_")}` : ''}`,
                     id: channel.data.id,
                     public_flags: 0,
-                    username: `${channel.data.type === 0 ? '#' : ''}${channel.data.name.replaceAll(" ", "_")}`,
+                    username: `${channel.data.type === 0 ? '#' : ''}${channel.data.name ? channel.data.name : channel.data.type === 3 ? 'Unnamed Group Chat' : "unknown"}`,
                 }
                 resolve();
+            }
+        }).catch(err => {
+            console.log(err, extractedData.topDMs[channelIndex]);
+            extractedData.topDMs[channelIndex].userData = {
+                username: 'Unknown',
+                discriminator: '#0000',
+                avatar: null,
             }
         });
     }));
