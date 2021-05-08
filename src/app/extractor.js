@@ -1,6 +1,6 @@
 import Papa from 'papaparse';
 import axios from 'axios';
-
+import axiosRetry from 'axios-retry';
 import eventsData from './events.json';
 import { loadEstimatedTime, loadTask } from './store';
 import { getCreatedTimestamp, getFavoriteWords, generateAvatarURL } from './helpers';
@@ -13,6 +13,14 @@ import { snakeCase } from 'snake-case';
  * @param userID The ID of the user to fetch
  */
 const fetchUser = async (userID) => {
+    axiosRetry(axios, { 
+      retries: 3,
+      retryDelay: retryCount => retryCount * 1000,
+      shouldResetTimeout: true,
+      retryCondition: (error) => {
+          return error.response && error.response.status === 500 && error.response.data && error.response.data.contains("Cannot fetch the Discord API");
+      },
+    });
     const res = await axios(`https://diswho.androz2091.fr/user/${userID}`).catch(() => {});
     if (!res || !res.data) return {
         username: 'Unknown',
