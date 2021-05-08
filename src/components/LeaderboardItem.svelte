@@ -10,7 +10,7 @@
     <div class="top-whois">
         <div class="top-bubble { position === 0 ? 'first' : position === 1 ? 'second' : position === 2 ? 'third' : '' }">{ position + 1 }</div>
         <img class="top-avatar" src="{avatarURL}" alt="Avatar" />
-        <h3 class="top-name">{username} <small class="text-muted">#{discriminator}</small></h3>
+        <h3 class="top-name">{username} <small class="text-muted">{discriminator}</small></h3>
     </div>
     <div class="top-messages">
         <h3>{count} <small>messages</small></h3>

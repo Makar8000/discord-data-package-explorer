@@ -28,6 +28,9 @@
         }
         .card.hours {
             grid-column: 6 / 12;
+            display: 'flex';
+            flex-direction: 'column';
+            justify-content: 'center';
         }
         .card.profile {
             grid-column: 1 / 4;

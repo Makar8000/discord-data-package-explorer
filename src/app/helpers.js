@@ -3,7 +3,7 @@ import axios from 'axios';
 export const generateAvatarURL = (avatarHash, id, discriminator) => {
     let avatarURL = 'https://cdn.discordapp.com/';
     if (avatarHash) avatarURL += `avatars/${id}/${avatarHash}.webp`;
-    else avatarURL += `embed/avatars/${discriminator % 5}.png`;
+    else avatarURL += `embed/avatars/${Math.floor(Math.random() * 5)}.png`;
     return avatarURL;
 };
 
@@ -38,7 +38,7 @@ export const getGitHubContributors = () => {
         const cachedExpiresAt = localStorage.getItem('contributors_cache_expires_at');
         const cachedData = localStorage.getItem('contributors_cache');
         if (cachedExpiresAt && (cachedExpiresAt > Date.now()) && cachedData) return resolve(JSON.parse(cachedData));
-        axios.get('https://api.github.com/repos/Androz2091/discord-data-package-explorer/contributors')
+        axios.get('https://api.github.com/repos/Makar8000/discord-data-package-explorer/contributors')
             .then((response) => {
                 const data = response.data.map((user) => ({ username: user.login, avatar: user.avatar_url, url: user.html_url }) );
                 localStorage.setItem('contributors_cache', JSON.stringify(data));

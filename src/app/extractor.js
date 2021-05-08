@@ -16,9 +16,10 @@ const fetchUser = async (userID) => {
     const res = await axios(`https://diswho.androz2091.fr/user/${userID}`).catch(() => {});
     if (!res || !res.data) return {
         username: 'Unknown',
-        discriminator: '0000',
+        discriminator: '#0000',
         avatar: null
     };
+    res.data.discriminator = '#' + res.data.discriminator;
     return res.data;
 };
 
@@ -222,17 +223,33 @@ export const extractData = async (files) => {
     console.log('[debug] Fetching top DMs...');
     loadTask.set('Loading user activity...');
     
+    const urlParams = new URLSearchParams(window.location.search);
+    const includeChannels = urlParams.get("includeChannels") == 'true';
+    let topCount = urlParams.get('topCount');
+    topCount = topCount ? Number.parseInt(topCount) : 10;
+
     extractedData.topDMs = extractedData.channels
-        .filter((channel) => channel.isDM)
+        .filter((channel) => includeChannels || channel.isDM)
         .sort((a, b) => b.messages.length - a.messages.length)
-        .slice(0, 10);
+        .slice(0, topCount);
     await Promise.all(extractedData.topDMs.map((channel) => {
         return new Promise((resolve) => {
-            fetchUser(channel.dmUserID).then((userData) => {
-                const channelIndex = extractedData.topDMs.findIndex((c) => c.data.id === channel.data.id);
-                extractedData.topDMs[channelIndex].userData = userData;
+            const channelIndex = extractedData.topDMs.findIndex((c) => c.data.id === channel.data.id);
+            if(channel.dmUserID) {
+                fetchUser(channel.dmUserID).then((userData) => {
+                    extractedData.topDMs[channelIndex].userData = userData;
+                    resolve();
+                });
+            } else {
+                extractedData.topDMs[channelIndex].userData = {
+                    avatar: null,
+                    discriminator: `${channel.data.type === 3 ? 'Group_DM' : channel.data.type === 0 ? `${channel.data.guild.name.replaceAll(" ", "_")}` : ''}`,
+                    id: channel.data.id,
+                    public_flags: 0,
+                    username: `${channel.data.type === 0 ? '#' : ''}${channel.data.name.replaceAll(" ", "_")}`,
+                }
                 resolve();
-            });
+            }
         });
     }));
 

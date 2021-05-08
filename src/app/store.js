@@ -11,7 +11,7 @@ if (isDemo) {
     const demoUserObject = {
         id: 422820341791064085,
         username: 'Wumpus',
-        discriminator: '0000',
+        discriminator: '#0000',
         avatar: null
     };
     const demoMessageObject = {
