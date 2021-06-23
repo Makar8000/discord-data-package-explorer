@@ -22,10 +22,9 @@ const fetchUser = async (userID) => {
     const res = await axios(`https://diswho.androz2091.fr/user/${userID}`).catch(() => {});
     if (!res || !res.data) return {
         username: 'Unknown',
-        discriminator: '#0000',
+        discriminator: '0000',
         avatar: null
     };
-    res.data.discriminator = '#' + res.data.discriminator;
     return res.data;
 };
 
@@ -297,20 +296,12 @@ export const extractData = async (files) => {
             userData: null
         }));
     await Promise.all(extractedData.topDMs.map((channel) => {
-        const channelIndex = extractedData.topDMs.findIndex((c) => c.data.id === channel.data.id);
         return new Promise((resolve) => {
             fetchUser(channel.dmUserID).then((userData) => {
                 const channelIndex = extractedData.topDMs.findIndex((c) => c.id === channel.id);
                 extractedData.topDMs[channelIndex].userData = userData;
                 resolve();
             });
-        }).catch(err => {
-            console.log(err, extractedData.topDMs[channelIndex]);
-            extractedData.topDMs[channelIndex].userData = {
-                username: 'Unknown',
-                discriminator: '#0000',
-                avatar: null,
-            }
         });
     }));
 
