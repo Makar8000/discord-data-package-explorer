@@ -80,6 +80,8 @@ const readAnalyticsFile = (file) => {
             decoder.push(data, final);
         };
         let prevChkEnd = '';
+        const eventLog = {};
+        eventsData.eventsToLog.forEach(event => eventLog[event] = []);
         decoder.ondata = (str, final) => {
             str = prevChkEnd + str;
             for (let event of Object.keys(eventsOccurrences)) {
@@ -88,6 +90,16 @@ const readAnalyticsFile = (file) => {
                 while (true) {
                     const ind = str.indexOf(eventName);
                     if (ind == -1) break;
+                    if(eventLog.hasOwnProperty(event)) {
+                        try {
+                            let eventJson = str.substr(ind);
+                            const eventJsonEnd = eventJson.indexOf('}');
+                            if(eventJsonEnd !== -1) {
+                                eventJson = JSON.parse(`{"event_name":"` + eventJson.substring(0, eventJsonEnd + 1));
+                                eventLog[event].push(eventJson);
+                            }
+                        } catch (err) {} 
+                    }
                     str = str.slice(ind + eventName.length);
                     eventsOccurrences[event]++;
                 }
@@ -102,7 +114,8 @@ const readAnalyticsFile = (file) => {
                     addReactionCount: eventsOccurrences.addReaction,
                     messageEditedCount: eventsOccurrences.messageEdited,
                     sendMessageCount: eventsOccurrences.sendMessage,
-                    slashCommandUsedCount: eventsOccurrences.slashCommandUsed
+                    slashCommandUsedCount: eventsOccurrences.slashCommandUsed,
+                    eventLog: eventLog
                 });
             }
         };
@@ -282,14 +295,25 @@ export const extractData = async (files) => {
     extractedData.sentMessageCount = statistics.sendMessageCount;
     extractedData.averageMessageCountPerDay = extractedData.sentMessageCount && perDay(extractedData.sentMessageCount, extractedData.user.id);
     extractedData.slashCommandUsedCount = statistics.slashCommandUsedCount;
+    extractedData.eventLog = statistics.eventLog;
 
     console.log('[debug] Activity fetched...');
 
     loadTask.set('Calculating statistics...');
 
+    /** topCalls */
+    console.log(extractedData.eventLog['joinCall'].reduce((res, current) => {
+      const channel = current["channel_id"];
+      if(!res.hasOwnProperty(channel))
+        res[channel] = 0;
+      res[channel]++;
+      return res;
+    }, {}));
+
     for (let i = 0; i < 24; i++) {
         extractedData.hoursValues.push(extractedData.channels.map((c) => c.messages).flat().filter((m) => new Date(m.timestamp).getHours() === i).length);
     }
 
+    console.log('[debug] Extracted Data', extractedData);
     return extractedData;
 };

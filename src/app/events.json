@@ -9,6 +9,13 @@
         "sendMessage",
         "slashCommandUsed"
     ],
+    "eventsToLog": [
+        "joinCall",
+        "startCall",
+        "joinVoiceChannel",
+        "addReaction",
+        "slashCommandUsed"
+    ],
     "eventList": [
         "permissionsRequested",
         "channelUpdated",
