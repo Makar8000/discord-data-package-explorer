@@ -31,9 +31,9 @@
 		<Router>
 			<Header />
 			<div>
-				<Route path="/stats" component={Stats} />
-				<Route path="/stats/demo" component={Stats} />
-				<Route path="/help" component={Help} />
+				<Route path="/ddpe/stats" component={Stats} />
+				<Route path="/ddpe/stats/demo" component={Stats} />
+				<Route path="/ddpe/help" component={Help} />
 				<Route path="/*" component={Loader} />
 			</div>
 			<Footer />

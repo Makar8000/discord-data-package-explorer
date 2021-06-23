@@ -66,7 +66,7 @@
             loadTask.set(null);
             loadEstimatedTime.set(null);
             console.log(`[debug] Data extracted in ${(Date.now() - extractStartAt) / 1000} seconds.`);
-            navigate('/stats');
+            navigate('./stats');
         }).catch((err) => {
             if (err.message === 'invalid_package_missing_messages') {
                 error = 'Some data is missing in your package, therefore it can not be read. <br> It is a bug on Discord side (06-10-21), and will be fixed in the next few days. <br> Join <a href="https://androz2091.fr/discord">our Discord</a> to get more information.';
@@ -112,9 +112,9 @@
 <template>
     <div class="app-loader">
         <div class="app-loader-boxes">
-            <p class="app-loader-description"><a href="/" use:link>DDPE</a> is a site that generates stats from your Discord Data Package. It is your device that processes the data, nothing is sent to any server!</p>
+            <p class="app-loader-description"><a href="./" use:link>DDPE</a> is a site that generates stats from your Discord Data Package. It is your device that processes the data, nothing is sent to any server!</p>
             <p>
-                <a class="app-loader-tuto" href="/help" use:link>
+                <a class="app-loader-tuto" href="./help" use:link>
                     <small class="app-loader-tag tag">1</small>
                     Get my Discord JSON data 👆
                     <br>

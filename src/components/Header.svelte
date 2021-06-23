@@ -6,7 +6,7 @@
     <div class="app-header">
         <div class="app-header-container">
             <div class="app-header-icon tag"><a href="/" use:link>#</a></div>
-            <h1 on:click="{() => navigate('/')}">Discord Data Package Explorer</h1>
+            <h1 on:click="{() => navigate('./')}">Discord Data Package Explorer</h1>
         </div>
     </div>
 </template>
