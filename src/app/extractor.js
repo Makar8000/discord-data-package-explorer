@@ -242,8 +242,7 @@ export const extractData = async (files) => {
 
     loadTask.set('Calculating statistics...');
 
-    const urlParams = new URLSearchParams(window.location.search);
-    let topCount = urlParams.get('topCount');
+    let topCount = localStorage.getItem('topCount')
     topCount = topCount ? Number.parseInt(topCount) : 10;
 
     extractedData.channelCount = channels.filter(c => !c.isDM).length;
@@ -321,20 +320,22 @@ export const extractData = async (files) => {
     extractedData.sentMessageCount = statistics.sendMessageCount;
     extractedData.averageMessageCountPerDay = extractedData.sentMessageCount && perDay(extractedData.sentMessageCount, extractedData.user.id);
     extractedData.slashCommandUsedCount = statistics.slashCommandUsedCount;
-    extractedData.eventLog = statistics.eventLog;
+    //extractedData.eventLog = statistics.eventLog;
 
     console.log('[debug] Activity fetched...');
 
     loadTask.set('Calculating statistics...');
 
     /** topCalls */
-    console.log(extractedData.eventLog['joinCall'].reduce((res, current) => {
-      const channel = current["channel_id"];
-      if(!res.hasOwnProperty(channel))
-        res[channel] = 0;
-      res[channel]++;
-      return res;
-    }, {}));
+    if(extractedData.eventLog) {
+        console.log(extractedData.eventLog['joinCall'].reduce((res, current) => {
+            const channel = current["channel_id"];
+            if(!res.hasOwnProperty(channel))
+                res[channel] = 0;
+            res[channel]++;
+            return res;
+        }, {}));
+    }
 
     console.log('[debug] Extracted Data', extractedData);
     return extractedData;
