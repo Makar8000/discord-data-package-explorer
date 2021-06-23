@@ -10,6 +10,11 @@ export const loadEstimatedTime = writable(null);
 export const data = writable(dataValue);
 
 data.subscribe((value) => {
-    if (!value) localStorage.removeItem('data');
-    else if (!value.isDemo) localStorage.setItem('data', JSON.stringify(value));
+    try {
+        if (!value) localStorage.removeItem('data');
+        else if (!value.isDemo) localStorage.setItem('data', JSON.stringify(value));
+    } catch (err) {
+        localStorage.removeItem('data');
+        console.warn("Unable to retain data locally due to size.");
+    }
 });

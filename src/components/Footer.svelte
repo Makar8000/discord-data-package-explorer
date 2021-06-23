@@ -1,6 +1,6 @@
 <template>
 	<footer>
-		<p>Made with ❤️ by <a href="https://twitter.com/Androz2091" target="_blank">Androz2091</a>. DDPE is an <a href="https://github.com/Androz2091/discord-data-package-explorer" target="_blank">open source</a> software.</p>
+		<p>Made with ❤️ by <a href="https://twitter.com/Androz2091" target="_blank">Androz2091</a>. Fork by <a href="https://github.com/Makar8000" target="_blank">Makar8000</a>. DDPE is an <a href="https://github.com/Makar8000/discord-data-package-explorer" target="_blank">open source</a> software.</p>
 	</footer>
 </template>
 

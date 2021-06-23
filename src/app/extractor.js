@@ -242,9 +242,13 @@ export const extractData = async (files) => {
 
     loadTask.set('Calculating statistics...');
 
+    const urlParams = new URLSearchParams(window.location.search);
+    let topCount = urlParams.get('topCount');
+    topCount = topCount ? Number.parseInt(topCount) : 10;
+
     extractedData.channelCount = channels.filter(c => !c.isDM).length;
     extractedData.dmChannelCount = channels.length - extractedData.channelCount;
-    extractedData.topChannels = channels.filter(c => c.data && c.data.guild).sort((a, b) => b.messages.length - a.messages.length).slice(0, 10).map((channel) => ({
+    extractedData.topChannels = channels.filter(c => c.data && c.data.guild).sort((a, b) => b.messages.length - a.messages.length).slice(0, topCount).map((channel) => ({
         name: channel.name,
         messageCount: channel.messages.length,
         guildName: channel.data.guild.name
@@ -280,10 +284,6 @@ export const extractData = async (files) => {
 
     console.log('[debug] Fetching top DMs...');
     loadTask.set('Loading user activity...');
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    let topCount = urlParams.get('topCount');
-    topCount = topCount ? Number.parseInt(topCount) : 10;
 
     extractedData.topDMs = channels
         .filter((channel) => channel.isDM)
