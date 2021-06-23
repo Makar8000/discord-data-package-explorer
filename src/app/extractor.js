@@ -336,10 +336,6 @@ export const extractData = async (files) => {
       return res;
     }, {}));
 
-    for (let i = 0; i < 24; i++) {
-        extractedData.hoursValues.push(extractedData.channels.map((c) => c.messages).flat().filter((m) => new Date(m.timestamp).getHours() === i).length);
-    }
-
     console.log('[debug] Extracted Data', extractedData);
     return extractedData;
 };
